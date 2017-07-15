@@ -43,34 +43,60 @@ public class MainFrame extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        //g.setColor(Color.white);
-        //g.fillRect(10, 10, 290, 380);	
-        for(int i =0; i<25; i++){
-        	if(i%5==0){
-        		if(i==0)
-        			addGroup(root,Integer.toString(i));
-        		else
-    			addGroup(,Integer.toString(i));
-        	}
-        }
+    
+        addUsersForTesting();
         
         getTree();
-        tree.scrollRectToVisible(new Rectangle(10,10,290,380));
-        treePane.setBounds(10, 10, 290, 380);
-        //tree.setBounds(10,10,290,380);
+        tree.scrollRectToVisible(new Rectangle(10,10,280,370));
+        treePane.setBounds(10, 10, 280, 370);
         treePane.setBackground(Color.white);
         treePane.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         add(treePane);
         revalidate();
         repaint();
+    }
+    
+    
+    public void addUsersForTesting(){
+    	SingleUser u1 = makeSingleUser("1");
+        SingleUser u2 = makeSingleUser("2");
+        SingleUser u3 = makeSingleUser("3");
+        SingleUser u4 = makeSingleUser("4");
+        SingleUser u5 = makeSingleUser("5");
+        SingleUser u6 = makeSingleUser("6");
+        SingleUser u7 = makeSingleUser("7");
+        SingleUser u8 = makeSingleUser("8");
+        SingleUser u9 = makeSingleUser("9");
+        SingleUser u10 = makeSingleUser("10");
+        SingleUser u11 = makeSingleUser("11");
+        Group g1 = makeGroup("g1");
+        Group g2 = makeGroup("g2");
+        Group g3 = makeGroup("g3");
+        Group g4 = makeGroup("g4");
+        Group g5 = makeGroup("g5");
         
-      
-
+        root.add(g1);
+        root.add(u1);
+        g1.add(g2);
+        g1.add(u2);
+       g2.add(u3);
+        g1.add(g2);
+        g1.add(u4);
+        g1.add(u5);
+        g2.add(u6);
+        g2.add(u7);
+        
+    }
+    
+    public SingleUser makeSingleUser(String id){
+    	return new SingleUser(id);
+    }
+    public Group makeGroup(String id){
+    	return new Group(id);
     }
     public void getTree(){
     	if(tree == null){
     		tree = new JTree(root.getTree());
-    		
     		tree.setVisibleRowCount(20);
     		treePane = new JScrollPane(tree);
     		//add(treePane);
