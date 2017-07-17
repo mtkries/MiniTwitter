@@ -1,25 +1,86 @@
 package users;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import users.Users;
 
 public class Group implements Users {
 	private String id;
+	private Group parent;
 	private HashMap<String,Users> children;
 	
 	public Group(String id){
 		this.id = id;
 		this.children = new HashMap<String,Users>();
+		parent = null;
 	}
-
+	public int getPositive(){
+		return getPositivePercentageHelper(0,this);
+	}
+	
+	public int getPositivePercentageHelper(int i, Users u){
+		int returnVal =i;
+		HashMap<String, Users> hm = u.getChildren();
+		for (Entry<String, Users> entry : hm.entrySet())
+        {
+			Users current = entry.getValue();
+			if(current.getAllowsChildren()&&current.getChildren().size() >0){
+				returnVal+=getPositivePercentageHelper(returnVal, current);
+			}
+			else{
+				SingleUser u2 = (SingleUser) current;
+				ArrayList<String> al = u2.getNewsFeed();
+					for(String s : al){
+						if(isPositive(s)){
+							returnVal++;
+						}
+					}
+			}
+        }
+		return returnVal;
+	}
+	private boolean isPositive(String s){
+		if(s.toLowerCase().contains("good") ||s.toLowerCase().contains("great") ||s.toLowerCase().contains("awesome") ||s.toLowerCase().contains("cool")){
+			return true;
+		}
+		return false;
+	}
+	
+	public int getTotalMessages(){
+		return getTotalMessagesHelper(0,this);
+	}
+	
+	public int getTotalMessagesHelper(int i, Users u){
+		int returnVal =i;
+		HashMap<String, Users> hm = u.getChildren();
+		for (Entry<String, Users> entry : hm.entrySet())
+        {
+			Users current = entry.getValue();
+			if(current.getAllowsChildren()&&current.getChildren().size() >0){
+				returnVal=getTotalMessagesHelper(returnVal, current);
+			}
+			else{
+				SingleUser u2 = (SingleUser) current;
+				returnVal+=u2.getNewsFeed().size();
+			}
+        }
+		return returnVal;
+	}
+	
 	public void add(Users u) {
 		children.put(u.getID(), u);
+		u.setParent(this);
 	}    
+	public void setParent(Group u){
+		this.parent = u;
+	}
+	public Group getParent(){
+		return parent;
+	}
 
 	@Override
 	public String getID() {
@@ -49,19 +110,60 @@ public class Group implements Users {
 		return makeTree(this);
 	}
 
-	public Users find(String id, Users u){
-		if(u.getID().equals(id)){
-			return u;
-		}
+	public int getTotalUsers(){
+		return getTotalUsersHelper(0,this);
+	}
+
+	public int getTotalGroups(){
+		return getTotalGroupsHelper(0,this)+1;
+	}
+	public int getTotalGroupsHelper(int i, Users u){
+		int returnVal =i;
 		HashMap<String, Users> hm = u.getChildren();
 		for (Entry<String, Users> entry : hm.entrySet())
         {
 			Users current = entry.getValue();
+			if(current.getAllowsChildren()&&current.getChildren().size() >0){
+				returnVal++;
+				returnVal=getTotalGroupsHelper(returnVal, current);
+			}
+			else{
+			}
+        }
+		return returnVal;
+	}
+	
+	private int getTotalUsersHelper(int i, Users u){
+		int returnVal = i;
+		HashMap<String, Users> hm = u.getChildren();
+		for (Entry<String, Users> entry : hm.entrySet())
+        {
+			Users current = entry.getValue();
+			if(current.getAllowsChildren()){
+				returnVal=getTotalUsersHelper(returnVal, current);
+			}
+			else{
+				returnVal++;
+			}
+        }
+		
+		return returnVal;
+	}
+	
+	public Users findChild(String id, Users u){
+		System.out.println("findchild");
+		HashMap<String, Users> hm = u.getChildren();
+		
+		for (Entry<String, Users> entry : hm.entrySet())
+        {
+			Users current = entry.getValue();
+			System.out.println(current + "F");
 			if(current.getID().equals(id)){
 				return current;
 			}
-			else{
-				return find(id, current);
+			if(current.getAllowsChildren()){
+				System.out.println("getting "+current +"Children");
+				return findChild(id, current);
 			}
         }
 		return null;
@@ -106,6 +208,7 @@ public class Group implements Users {
     	return n;
     }
 
+	
 	
 
 }

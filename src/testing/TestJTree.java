@@ -1,15 +1,9 @@
 package testing;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import javax.swing.JFrame;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import users.Group;
 import users.SingleUser;
-import users.Users;
 @SuppressWarnings("serial")
 public class TestJTree extends JFrame
 {
@@ -49,7 +43,7 @@ public class TestJTree extends JFrame
     	root.add(ppstu2);
     	
     	
-    	rootNode = new DefaultMutableTreeNode(root);
+    	setRootNode(new DefaultMutableTreeNode(root));
 
     	tree = new JTree(root.getTree());
         add(tree);
@@ -59,5 +53,11 @@ public class TestJTree extends JFrame
         this.pack();
         this.setVisible(true);
     }
+	public DefaultMutableTreeNode getRootNode() {
+		return rootNode;
+	}
+	public void setRootNode(DefaultMutableTreeNode rootNode) {
+		this.rootNode = rootNode;
+	}
     
 }

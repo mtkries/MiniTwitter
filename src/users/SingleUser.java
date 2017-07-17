@@ -2,17 +2,21 @@ package users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class SingleUser implements Users {
 	private String id;
 	private HashMap<String,Users> followers;
 	private HashMap<String,Users> followings;
-	private List<String> newsFeed;
+	private ArrayList<String> newsFeed;
+	private Group parent;
 	
+	public void setParent(Group u){
+		this.parent = u;
+	}
+	public Group getParent(){
+		return parent;
+	}
 	public SingleUser(String id){
 		this.id = id;
 		followers = new HashMap<String,Users>();
@@ -20,12 +24,22 @@ public class SingleUser implements Users {
 		newsFeed = new ArrayList<String>();
 	}
 	
-	public void addFollower(Users u) {
+	public boolean addFollower(Users u) {
+		if(followers.containsValue(u)){
+			return false;
+		}
 		followers.put(u.getID(), u);
+		return true;
 	}
 
-	public void addFollowing(Users u) {
+	public boolean addFollowing(Users u) {
+		SingleUser u2 = (SingleUser)u;
+		if(followings.containsValue(u2)){
+			return false;
+		}
 		followings.put(u.getID(), u);
+		
+		return true;
 	}
 	
 	public HashMap<String,Users> getFollowers() {
@@ -35,6 +49,15 @@ public class SingleUser implements Users {
 	public HashMap<String,Users> getFollowings() {
 		return followings;
 	}
+	
+//	public void printFollowers(){
+//		for (Entry<String, Users> entry : followings.entrySet())
+//        {
+//			
+//			
+//        
+//        }
+//	}
 	
 	@Override
 	public String getID() {
@@ -50,9 +73,7 @@ public class SingleUser implements Users {
 		newsFeed.add(s);
 	}
 
-	
-
-	public List<String> getNewsFeed() {
+	public ArrayList<String> getNewsFeed() {
 		return newsFeed;
 	}
 
