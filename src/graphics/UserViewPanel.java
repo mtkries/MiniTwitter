@@ -28,6 +28,8 @@ import users.SingleUser;
 public class UserViewPanel extends JPanel {
 
 	private JLabel userIDLabel;
+	private JLabel creationTime;
+	private JLabel lastUpdateTime;
 	private JLabel followingsLabel;
 	private JLabel newsFeedLabel;
 	private JButton followUser;
@@ -140,11 +142,21 @@ public class UserViewPanel extends JPanel {
     	newsFeedScrollPane.setBackground(Color.white);
     	newsFeedScrollPane.setBorder(BorderFactory.createLineBorder(Color.black, 2));
     	
-//		private JButton followUser;
-//		private JList<String> currentFollowing;
-//		private JTextField tweetMessageTextField;
-//		private JButton postTweet;
-		
+    	
+    	creationTime = new JLabel("Creation Time: "+Long.toString(thisUser.getCreationTime()));
+    	creationTime.setFont(labelFont);
+    	creationTime.setVerticalAlignment(SwingConstants.CENTER);
+    	creationTime.setHorizontalAlignment(SwingConstants.CENTER);
+    	creationTime.setBounds(new Rectangle(15,500,370,40));
+
+    	lastUpdateTime = new JLabel("Last Update Time: "+Long.toString(thisUser.getLastUpdateTime()));
+    	lastUpdateTime.setFont(labelFont);
+    	lastUpdateTime.setVerticalAlignment(SwingConstants.CENTER);
+    	lastUpdateTime.setHorizontalAlignment(SwingConstants.CENTER);
+    	lastUpdateTime.setBounds(new Rectangle(15,550,370,40));
+    	
+    	add(lastUpdateTime);
+    	add(creationTime);
     	add(addUserTextField);
     	add(followingScrollPane);
     	add(newsFeedScrollPane);
@@ -198,10 +210,14 @@ public class UserViewPanel extends JPanel {
 			System.out.println("You cannot follow a group");
 		}
 		else{
-			user.addFollowing(followerToAdd);
-			SingleUser followerToAdd1 =(SingleUser)followerToAdd;
+			SingleUser followerToAdd1 = (SingleUser) followerToAdd;
+			user.addFollowing(followerToAdd1);
+			followerToAdd1.addFollowing(user);
 			if(followerToAdd1.addFollower(user)){
 				updateFollowingsListModel(followerToAdd1.getID());
+			}
+			if(user.addFollower(followerToAdd1)){
+				updateFollowingsListModel(user.getID());
 			}
 		}
 //		user.addFollowing(u);
@@ -213,6 +229,7 @@ public class UserViewPanel extends JPanel {
 	}
 	public void updateNewsFeedListModel(String s){
 		newsFeedListModel.addElement(s);
+		lastUpdateTime.setText("Last Update Time: "+Long.toString(thisUser.getLastUpdateTime()));
 		System.out.println("Update List Model " +s);
 //		fireContentsChanged(followingListModel);
 	}

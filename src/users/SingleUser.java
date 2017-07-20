@@ -10,14 +10,24 @@ public class SingleUser implements Users {
 	private HashMap<String,Users> followings;
 	private ArrayList<String> newsFeed;
 	private Group parent;
+	private long creationTime;
+	private long lastUpdateTime;
 	
 	public void setParent(Group u){
 		this.parent = u;
+	}
+	public void setLastUpdateTime(long lastUpdateTime){
+		this.lastUpdateTime = lastUpdateTime;
+	}
+	public long getLastUpdateTime(){
+		return this.lastUpdateTime;
 	}
 	public Group getParent(){
 		return parent;
 	}
 	public SingleUser(String id){
+		this.creationTime = System.currentTimeMillis();
+		this.lastUpdateTime = System.currentTimeMillis();
 		this.id = id;
 		followers = new HashMap<String,Users>();
 		followings = new HashMap<String,Users>();
@@ -25,7 +35,8 @@ public class SingleUser implements Users {
 	}
 	
 	public boolean addFollower(Users u) {
-		if(followers.containsValue(u)){
+		SingleUser u2 = (SingleUser)u;
+		if(followers.containsValue(u2)){
 			return false;
 		}
 		followers.put(u.getID(), u);
@@ -70,6 +81,7 @@ public class SingleUser implements Users {
 	}
 
 	public void addToNewsFeed(String s) {
+		this.lastUpdateTime = System.currentTimeMillis();
 		newsFeed.add(s);
 	}
 
@@ -92,6 +104,10 @@ public class SingleUser implements Users {
 	@Override
 	public DefaultMutableTreeNode getTree() {
 		return new DefaultMutableTreeNode(this);
+	}
+	@Override
+	public long getCreationTime() {
+		return creationTime;
 	}
 
 }

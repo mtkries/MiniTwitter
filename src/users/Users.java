@@ -6,6 +6,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 //Composite
 public interface Users {
+	public long getCreationTime();
 	public String getID();
 	public void setID(String id);
 	public boolean getAllowsChildren();

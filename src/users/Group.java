@@ -10,6 +10,7 @@ import users.Users;
 
 public class Group implements Users {
 	private String id;
+	private long creationTime;
 	private Group parent;
 	private HashMap<String,Users> children;
 	
@@ -17,6 +18,7 @@ public class Group implements Users {
 		this.id = id;
 		this.children = new HashMap<String,Users>();
 		parent = null;
+		creationTime=System.currentTimeMillis();
 	}
 	public int getPositive(){
 		return getPositivePercentageHelper(0,this);
@@ -114,6 +116,22 @@ public class Group implements Users {
 		return getTotalUsersHelper(0,this);
 	}
 
+	private int getTotalUsersHelper(int i, Users u){
+		int returnVal = i;
+		HashMap<String, Users> hm = u.getChildren();
+		for (Entry<String, Users> entry : hm.entrySet())
+        {
+			Users current = entry.getValue();
+			if(current.getAllowsChildren()){
+				returnVal=getTotalUsersHelper(returnVal, current);
+			}
+			else{
+				returnVal++;
+			}
+        }
+		
+		return returnVal;
+	}
 	public int getTotalGroups(){
 		return getTotalGroupsHelper(0,this)+1;
 	}
@@ -133,22 +151,6 @@ public class Group implements Users {
 		return returnVal;
 	}
 	
-	private int getTotalUsersHelper(int i, Users u){
-		int returnVal = i;
-		HashMap<String, Users> hm = u.getChildren();
-		for (Entry<String, Users> entry : hm.entrySet())
-        {
-			Users current = entry.getValue();
-			if(current.getAllowsChildren()){
-				returnVal=getTotalUsersHelper(returnVal, current);
-			}
-			else{
-				returnVal++;
-			}
-        }
-		
-		return returnVal;
-	}
 	
 	public Users findChild(String id, Users u){
 		System.out.println("findchild");
@@ -207,6 +209,35 @@ public class Group implements Users {
             
     	return n;
     }
+    public int getInvalidIDs(){
+    	return getInvalidIDsHelper(0,this);
+    }
+    private int getInvalidIDsHelper(int i, Users u){
+		int returnVal = i;
+		HashMap<String, Users> hm = u.getChildren();
+		for (Entry<String, Users> entry : hm.entrySet())
+        {
+			Users current = entry.getValue();
+			if(current.getID().contains(" ")){
+				returnVal++;
+			}
+			if(current.getAllowsChildren()){
+				returnVal=getInvalidIDsHelper(returnVal, current);
+			}
+			else{
+				//returnVal++;
+			}
+        }
+		
+		return returnVal;
+	}
+    
+    
+
+	@Override
+	public long getCreationTime() {
+		return creationTime;
+	}
 
 	
 	

@@ -45,6 +45,7 @@ public class MainFrame extends JPanel {
 	private JButton showUserTotalButton;
 	private JButton showGroupTotalButton;
 	private JButton showTotalMessagesButton;
+	private JButton checkIDButton;
 	private JButton showPositivePercentageButton;
 	private JButton addUserButton;
 	private JButton addGroupButton;
@@ -56,6 +57,7 @@ public class MainFrame extends JPanel {
         this.root = new Group("root");
         selectedUser = root;
         jTreeRoot = new DefaultMutableTreeNode(root);
+        selectedNode = jTreeRoot;
         testTree = new JTree(jTreeRoot);
     	setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setBackground(Color.LIGHT_GRAY);
@@ -134,6 +136,14 @@ public class MainFrame extends JPanel {
     	showPositivePercentageButton.setHorizontalAlignment(SwingConstants.CENTER);
     	showPositivePercentageButton.setBounds(new Rectangle(555,310,235,60));
     	
+    	checkIDButton = new JButton("Check for Invalid ID");
+    	checkIDButton.setFont(labelFont);
+    	checkIDButton.setVerticalAlignment(SwingConstants.CENTER);
+    	checkIDButton.setHorizontalAlignment(SwingConstants.CENTER);
+    	checkIDButton.setBounds(new Rectangle(300,380,235,60));
+    	
+    	
+    	add(checkIDButton);
     	add(openUserViewButton);
     	add(userID);
     	add(groupID);
@@ -150,6 +160,11 @@ public class MainFrame extends JPanel {
     	          treeEntryClicked(me);
     	        }
     	      });
+    	checkIDButton.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent me) {
+    			checkIDButtonPressed();
+    		}
+    	});
     	addUserButton.addActionListener(new ActionListener() { 
     		  public void actionPerformed(ActionEvent e) { 
     			    addUserButtonPressed();
@@ -186,6 +201,10 @@ public class MainFrame extends JPanel {
 			  } 
 			} );
     	
+    }
+    public void checkIDButtonPressed(){
+    	Group g = (Group)root;
+    	JOptionPane.showMessageDialog(null, "# of Invalid IDs:" + Integer.toString(g.getInvalidIDs()));
     }
     public void treeEntryClicked(MouseEvent me){
     	TreePath tp = testTree.getPathForLocation(me.getX(), me.getY());
@@ -295,7 +314,7 @@ public class MainFrame extends JPanel {
     @Override
     public Dimension getPreferredSize() {
 
-        return new Dimension(800,400);
+        return new Dimension(800,600);
     }
 
 
@@ -385,7 +404,7 @@ public class MainFrame extends JPanel {
     
     public SingleUser makeSingleUser(String id){
     	return new SingleUser(id);
-    }
+    }	
     public Group makeGroup(String id){
     	return new Group(id);
     }
